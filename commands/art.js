@@ -35,10 +35,9 @@ module.exports = {
       }, pageAccessToken);
 
     } catch (error) {
-      // Handle and log any errors during image generation
+     
       console.error('Error generating image:', error);
       
-      // Notify user of the error
       await sendMessage(senderId, {
         text: 'Có lỗi gì đó đã xảy ra vui lòng thử lại sau nha.'
       }, pageAccessToken);

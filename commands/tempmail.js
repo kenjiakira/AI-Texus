@@ -30,6 +30,6 @@ module.exports = {
       }
     }
 
-    sendMessage(senderId, { text: 'Sử dụng không hợp lệ. Sử dụng -tempmail gen hoặc -tempmail inbox <email>' }, pageAccessToken);
+    sendMessage(senderId, { text: 'Cách Dùng không hợp lệ. Sử dụng -tempmail gen hoặc -tempmail inbox <email>' }, pageAccessToken);
   },
 };
