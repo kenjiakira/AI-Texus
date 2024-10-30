@@ -2,8 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const { sendMessage } = require('./sendMessage');
 
-const adminId = '8522020297887049'; 
-
 const commands = new Map();
 const prefix = '-';
 
@@ -26,17 +24,10 @@ async function handleMessage(event, pageAccessToken) {
     : messageText.split(' ');
 
   try {
-    if (senderId === adminId) {
-      console.log(`Admin (${senderId}) executed command: ${commandName}`);
-
-      if (commands.has(commandName.toLowerCase())) {
-        await commands.get(commandName.toLowerCase()).execute(senderId, args, pageAccessToken, sendMessage);
-      } else {
-        await commands.get('gpt4').execute(senderId, [messageText], pageAccessToken);
-      }
+    if (commands.has(commandName.toLowerCase())) {
+      await commands.get(commandName.toLowerCase()).execute(senderId, args, pageAccessToken, sendMessage);
     } else {
-
-      await sendMessage(senderId, { text: 'Bạn không có quyền thực hiện lệnh này.' }, pageAccessToken);
+      await commands.get('gpt4').execute(senderId, [messageText], pageAccessToken);
     }
   } catch (error) {
     console.error(`Error executing command:`, error);
