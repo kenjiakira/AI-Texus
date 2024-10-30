@@ -4,6 +4,7 @@ const { sendMessage } = require('./sendMessage');
 
 const commands = new Map();
 const prefix = '-';
+const ADMIN_IDS = ['8522020297887049','100092325757607']; 
 
 fs.readdirSync(path.join(__dirname, '../commands'))
   .filter(file => file.endsWith('.js'))
@@ -25,7 +26,9 @@ async function handleMessage(event, pageAccessToken) {
 
   try {
     if (commands.has(commandName.toLowerCase())) {
-      await commands.get(commandName.toLowerCase()).execute(senderId, args, pageAccessToken, sendMessage);
+      
+      const isAdmin = ADMIN_IDS.includes(senderId);
+      await commands.get(commandName.toLowerCase()).execute(senderId, args, pageAccessToken, sendMessage, isAdmin);
     } else {
       await commands.get('gpt4').execute(senderId, [messageText], pageAccessToken);
     }

@@ -5,15 +5,12 @@ module.exports = {
   description: 'Xem UID của bạn',
   usage: 'uid',
   author: 'Hệ thống',
-  async execute({ event, send }) {
-
-    const userId = event.sender.id; 
-
+  execute(senderId, args, pageAccessToken) {
     const responseMessage = `
 ━━━━━━━━━━━━━━
-UID của bạn là: ${userId}
+UID của bạn là: ${senderId}
 ━━━━━━━━━━━━━━`;
 
-    return send(responseMessage);
+    sendMessage(senderId, { text: responseMessage }, pageAccessToken);
   }
 };
