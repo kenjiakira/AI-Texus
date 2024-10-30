@@ -22,7 +22,6 @@ const sendMessage = async (senderId, { text = '', attachment = null }, pageAcces
     }
 
     if (attachment) {
-    
       if (attachment.type && attachment.payload && attachment.payload.url) {
         messagePayload.message.attachment = {
           type: attachment.type,
@@ -33,6 +32,8 @@ const sendMessage = async (senderId, { text = '', attachment = null }, pageAcces
         };
       } else {
         console.warn("Attachment không hợp lệ:", attachment);
+        await axiosPost(url, { recipient: { id: senderId }, message: { text: "Có lỗi xảy ra với tệp đính kèm." } }, params);
+        return; 
       }
     }
 
@@ -42,6 +43,7 @@ const sendMessage = async (senderId, { text = '', attachment = null }, pageAcces
   } catch (e) {
     const errorMessage = e.response?.data?.error?.message || e.message;
     console.error(`Error in ${path.basename(__filename)}: ${errorMessage}`);
+    await axiosPost(url, { recipient: { id: senderId }, message: { text: "Có lỗi xảy ra khi gửi tin nhắn." } }, params);
   }
 };
 
