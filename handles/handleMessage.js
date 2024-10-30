@@ -5,7 +5,6 @@ const { sendMessage } = require('./sendMessage');
 const commands = new Map();
 const prefix = '-';
 
-// Load command modules
 fs.readdirSync(path.join(__dirname, '../commands'))
   .filter(file => file.endsWith('.js'))
   .forEach(file => {
