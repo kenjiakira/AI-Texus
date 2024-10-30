@@ -4,7 +4,7 @@ const path = require('path');
 const { image } = require('image-downloader');
 const { sendMessage } = require('../handles/sendMessage'); 
 
-const cacheDir = path.resolve(__dirname, '../cache');
+const cacheDir = path.resolve(__dirname, 'cache');
 if (!fs.existsSync(cacheDir)) {
     fs.mkdirsSync(cacheDir);
 }
