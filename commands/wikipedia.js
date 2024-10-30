@@ -12,9 +12,9 @@ if (!fs.existsSync(cacheDir)) {
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 module.exports = {
-    name: "wiki",
+    name: "wikipedia",
     description: "Tra cứu thông tin từ Wikipedia.",
-    usage: "wiki [từ khóa]",
+    usage: "wikipedia [từ khóa]",
     author: "Hệ thống",
     async execute(senderId, args, pageAccessToken) {
         const searchTerm = args.join(" ") || null; 

@@ -10,7 +10,6 @@ const sendMessage = async (senderId, { text = '', attachment = null }, pageAcces
   const params = { access_token: pageAccessToken };
 
   try {
-    
     await axiosPost(url, { recipient: { id: senderId }, sender_action: "typing_on" }, params);
 
     const messagePayload = {
@@ -23,21 +22,24 @@ const sendMessage = async (senderId, { text = '', attachment = null }, pageAcces
     }
 
     if (attachment) {
-      messagePayload.message.attachment = {
-        type: attachment.type,
-        payload: {
-          url: attachment.payload.url,
-          is_reusable: true
-        }
-      };
+    
+      if (attachment.type && attachment.payload && attachment.payload.url) {
+        messagePayload.message.attachment = {
+          type: attachment.type,
+          payload: {
+            url: attachment.payload.url,
+            is_reusable: true
+          }
+        };
+      } else {
+        console.warn("Attachment không hợp lệ:", attachment);
+      }
     }
 
     await axiosPost(url, messagePayload, params);
-
     await axiosPost(url, { recipient: { id: senderId }, sender_action: "typing_off" }, params);
 
   } catch (e) {
-    
     const errorMessage = e.response?.data?.error?.message || e.message;
     console.error(`Error in ${path.basename(__filename)}: ${errorMessage}`);
   }

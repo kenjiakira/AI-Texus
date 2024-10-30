@@ -2,9 +2,9 @@ const { exec } = require('child_process');
 const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
-    name: 'run',
+    name: 'shell',
     description: 'Chạy một lệnh shell (chỉ dành cho admin).',
-    usage: 'run [lệnh]',
+    usage: 'shell [lệnh]',
     author: 'Hệ thống',
     async execute(senderId, args, pageAccessToken, sendMessage, isAdmin) {
         if (!isAdmin) {
