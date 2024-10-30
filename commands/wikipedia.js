@@ -1,7 +1,5 @@
 const axios = require('axios');
-const fs = require('fs-extra');
-const path = require('path');
-const { sendMessage } = require('../handles/sendMessage'); 
+const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
     name: "wikipedia",
@@ -9,7 +7,7 @@ module.exports = {
     usage: "wikipedia [từ khóa]",
     author: "Hệ thống",
     async execute(senderId, args, pageAccessToken) {
-        const searchTerm = args.join(" ") || null; 
+        const searchTerm = args.join(" ") || null;
 
         try {
             if (!searchTerm) {
@@ -17,6 +15,7 @@ module.exports = {
                 if (randomWikiArticle) {
                     await sendMessage(senderId, {
                         text: `📚 Wikipedia: ${randomWikiArticle.title}\n\n${randomWikiArticle.extract}\n\nĐọc thêm: ${randomWikiArticle.url}\n\nBạn có thể tìm thêm thông tin bằng cách nhập wiki 'từ khóa'.`,
+                       
                         attachment: {
                             type: 'image',
                             payload: {
@@ -33,17 +32,14 @@ module.exports = {
                 const wikiData = response.data;
                 if (wikiData.title && wikiData.extract) {
                     const imageUrl = wikiData.thumbnail ? wikiData.thumbnail.source : null;
-                    let attachments = [];
-                    if (imageUrl) {
-                        attachments.push({
-                            type: 'image',
-                            payload: {
-                                url: imageUrl // Gửi ảnh trực tiếp từ URL
-                            }
-                        });
-                    }
                     const message = `📚 Wikipedia: ${wikiData.title}\n\n${wikiData.extract}\n\nĐọc thêm: ${wikiData.content_urls.desktop.page}`;
-                    await sendMessage(senderId, { text: message, attachment: attachments }, pageAccessToken);
+
+                    if (imageUrl) {
+                        await sendMessage(senderId, { text: message, attachment: { type: 'image', payload: { url: imageUrl } } }, pageAccessToken);
+                    } else {
+                       
+                        await sendMessage(senderId, { text: message }, pageAccessToken);
+                    }
                     return;
                 } else {
                     await sendMessage(senderId, { text: "Không tìm thấy thông tin từ khóa này trên Wikipedia." }, pageAccessToken);
