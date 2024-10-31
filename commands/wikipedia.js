@@ -14,18 +14,7 @@ module.exports = {
                 const randomWikiArticle = await fetchRandomWikiArticle();
                 if (randomWikiArticle) {
                     await sendMessage(senderId, {
-<<<<<<< HEAD
                         text: `📚 Wikipedia: ${randomWikiArticle.title}\n\n${randomWikiArticle.extract}\n\nĐọc thêm: ${randomWikiArticle.url}\n\nBạn có thể tìm thêm thông tin bằng cách nhập 'wikipedia [từ khóa]'.`
-=======
-                        text: `📚 Wikipedia: ${randomWikiArticle.title}\n\n${randomWikiArticle.extract}\n\nĐọc thêm: ${randomWikiArticle.url}\n\nBạn có thể tìm thêm thông tin bằng cách nhập wiki 'từ khóa'.`,
-                       
-                        attachment: {
-                            type: 'image',
-                            payload: {
-                                url: randomWikiArticle.image 
-                            }
-                        }
->>>>>>> d9bc81f159d02ed8bf98c99324f611eee55ab0da
                     }, pageAccessToken);
                 } else {
                     await sendMessage(senderId, { text: "Không thể tìm thấy thông tin ngẫu nhiên từ Wikipedia vào lúc này." }, pageAccessToken);
@@ -36,21 +25,8 @@ module.exports = {
                 const wikiData = response.data;
 
                 if (wikiData.title && wikiData.extract) {
-<<<<<<< HEAD
                     const message = `📚 Wikipedia: ${wikiData.title}\n\n${wikiData.extract}\n\nĐọc thêm: ${wikiData.content_urls.desktop.page}`;
                     await sendMessage(senderId, { text: message }, pageAccessToken);
-=======
-                    const imageUrl = wikiData.thumbnail ? wikiData.thumbnail.source : null;
-                    const message = `📚 Wikipedia: ${wikiData.title}\n\n${wikiData.extract}\n\nĐọc thêm: ${wikiData.content_urls.desktop.page}`;
-
-                    if (imageUrl) {
-                        await sendMessage(senderId, { text: message, attachment: { type: 'image', payload: { url: imageUrl } } }, pageAccessToken);
-                    } else {
-                       
-                        await sendMessage(senderId, { text: message }, pageAccessToken);
-                    }
-                    return;
->>>>>>> d9bc81f159d02ed8bf98c99324f611eee55ab0da
                 } else {
                     await sendMessage(senderId, { text: "Không tìm thấy thông tin từ khóa này trên Wikipedia." }, pageAccessToken);
                 }
