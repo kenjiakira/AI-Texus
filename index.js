@@ -4,7 +4,6 @@ const path = require('path');
 const axios = require('axios');
 const { handleMessage } = require('./handles/handleMessage');
 const { handlePostback } = require('./handles/handlePostback');
-const app = require('./listen');
 
 const app = express();
 app.use(express.json());
