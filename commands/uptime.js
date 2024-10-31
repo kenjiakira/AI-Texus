@@ -1,12 +1,10 @@
 const os = require('os');
-const { exec } = require('child_process');
 const util = require('util');
-const execPromise = util.promisify(exec);
+const execPromise = util.promisify(require('child_process').exec);
 const { sendMessage } = require('../handles/sendMessage');
 
 let commandCount = 0;
 const botStartTime = Date.now();
-
 
 module.exports = {
     name: "uptime",
@@ -27,10 +25,9 @@ module.exports = {
         let hours = Math.floor((uptime / (1000 * 60 * 60)) % 24);
         let days = Math.floor(uptime / (1000 * 60 * 60 * 24));
 
-        let memoryUsage = process.memoryUsage().heapUsed / 1024 / 1024;
-        let cpuLoad = os.loadavg()[0].toFixed(2);
+        let memoryUsage = process.memoryUsage().heapUsed / 1024 / 1024; 
+        let cpuLoad = os.loadavg()[0].toFixed(2); 
 
-        const ping = await getPing();
         const systemInfo = await getSystemInfo();
         const nodeVersion = await getNodeVersion();
         const systemUptime = await getSystemUptime();
@@ -49,39 +46,15 @@ module.exports = {
         uptimeMessage += `- Tên máy: ${systemInfo.hostname}\n`;
         uptimeMessage += `- CPU Model: ${systemInfo.cpuModel} (${systemInfo.coreCount} core(s), ${systemInfo.cpuSpeed} MHz)\n`;
         uptimeMessage += `- Tải CPU: ${systemInfo.loadAverage.join(', ')}\n`;
-        uptimeMessage += `- Dung lượng bộ nhớ: ${systemInfo.totalMemory} GB (Trên tổng ${systemInfo.totalMemory} GB)\n`;
+        uptimeMessage += `- Dung lượng bộ nhớ: ${systemInfo.totalMemory} GB\n`;
         uptimeMessage += `- Bộ nhớ còn lại: ${systemInfo.freeMemory} GB\n`;
         uptimeMessage += `- Bộ nhớ đã sử dụng: ${systemInfo.usedMemory} GB\n`;
         uptimeMessage += `=======================\n`;
-        uptimeMessage += `🌐 Ping: ${ping}\n`;
-        uptimeMessage += `=======================\n`;
         uptimeMessage += `🔢 Node.js Version: ${nodeVersion}\n`;
-
-        const maxUptime = 86400000;
-        const uptimeBar = createProgressBar(maxUptime, uptime);
-        uptimeMessage += `=======================\n📅 Progress đến 24h: ${uptimeBar}\n`;
 
         return sendMessage(senderId, { text: uptimeMessage }, pageAccessToken);
     }
 };
-
-function createProgressBar(total, current, length = 17) {
-    const filledLength = Math.round((current / total) * length);
-    const bar = "█".repeat(filledLength) + "░".repeat(length - filledLength);
-    return `[${bar}] ${(current / total * 100).toFixed(2)}%`;
-}
-
-async function getPing() {
-    try {
-        const isWindows = os.platform() === 'win32';
-        const pingCommand = isWindows ? 'ping -n 1 google.com' : 'ping -c 1 google.com';
-        const { stdout } = await execPromise(pingCommand);
-        const match = stdout.match(isWindows ? /time=(\d+)ms/ : /time=(\d+\.\d+) ms/);
-        return match ? `${match[1]} ms` : 'N/A';
-    } catch {
-        return 'N/A';
-    }
-}
 
 async function getSystemInfo() {
     try {
@@ -96,7 +69,6 @@ async function getSystemInfo() {
         const totalMemory = (os.totalmem() / (1024 * 1024 * 1024)).toFixed(2);
         const freeMemory = (os.freemem() / (1024 * 1024 * 1024)).toFixed(2);
         const usedMemory = (totalMemory - freeMemory).toFixed(2);
-        const uptime = os.uptime();
 
         return {
             platform,
@@ -109,8 +81,7 @@ async function getSystemInfo() {
             loadAverage,
             totalMemory,
             freeMemory,
-            usedMemory,
-            uptime
+            usedMemory
         };
     } catch {
         return {
@@ -124,8 +95,7 @@ async function getSystemInfo() {
             loadAverage: 'N/A',
             totalMemory: 'N/A',
             freeMemory: 'N/A',
-            usedMemory: 'N/A',
-            uptime: 'N/A'
+            usedMemory: 'N/A'
         };
     }
 }
