@@ -1,16 +1,16 @@
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
-const { sendMessage } = require('../handles/sendMessage');
+const { sendMessage } = require('../handles/sendMessage'); 
 
-let is_url = (url) => /^http(s|):\/\//.test(url);
+let is_url = (url) => /^http(s)?:\/\//.test(url);
 
 let stream_url = async (url, type) => {
   try {
     const res = await axios.get(url, { responseType: 'arraybuffer' });
     const filePath = path.join(__dirname, 'cache', `${Date.now()}.${type}`);
     fs.writeFileSync(filePath, res.data);
-    setTimeout(() => fs.unlinkSync(filePath), 1000 * 60); 
+    setTimeout(() => fs.unlinkSync(filePath), 1000 * 60);
     return fs.createReadStream(filePath);
   } catch (error) {
     console.error("Lỗi khi tải tệp từ URL:", error);
@@ -23,17 +23,15 @@ module.exports = {
   description: "Tải nội dung từ TikTok thông qua URL.",
   usage: "tiktok <url>",
   author: "Hệ thống",
-  async execute({ api, event, args }) {
-    const { threadID, messageID } = event;
-
+  async execute({ api, args }) {
     if (args.length === 0) {
-      return sendMessage(threadID, "⚠️ Vui lòng cung cấp URL TikTok. 📲", messageID); 
+      return sendMessage("⚠️ Vui lòng cung cấp URL TikTok. 📲");
     }
 
     const url = args.join(" ").trim();
 
     if (!is_url(url)) {
-      return sendMessage(threadID, "❌ Vui lòng cung cấp URL hợp lệ. 🌐", messageID); 
+      return sendMessage("❌ Vui lòng cung cấp URL hợp lệ. 🌐");
     }
 
     if (/tiktok\.com/.test(url)) {
@@ -41,7 +39,7 @@ module.exports = {
         const res = await axios.post(`https://www.tikwm.com/api/`, { url });
 
         if (res.data.code !== 0) {
-          return sendMessage(threadID, "⚠️ Không thể tải nội dung từ URL này. 😢", messageID);
+          return sendMessage("⚠️ Không thể tải nội dung từ URL này. 😢");
         }
 
         const tiktok = res.data.data;
@@ -55,17 +53,17 @@ module.exports = {
           attachment.push(await stream_url(tiktok.play, 'mp4'));
         }
 
-        sendMessage(threadID, {
+        sendMessage({
           body: `🎉==[ TIKTOK DOWNLOAD ]==🎉\n\n🎬 **Tiêu đề**: ${tiktok.title}\n❤️ **Lượt thích**: ${tiktok.digg_count}\n👤 **Tác giả**: ${tiktok.author.nickname}\n🆔 **ID TikTok**: ${tiktok.author.unique_id}`,
           attachment
-        }, messageID); 
+        });
 
       } catch (error) {
         console.error("Lỗi trong quá trình xử lý:", error);
-        return sendMessage(threadID, "❌ Đã xảy ra lỗi khi xử lý yêu cầu của bạn. 😥", messageID); 
+        return sendMessage("❌ Đã xảy ra lỗi khi xử lý yêu cầu của bạn. 😥");
       }
     } else {
-      return sendMessage(threadID, "⚠️ Vui lòng cung cấp URL TikTok hợp lệ. 📲", messageID); 
+      return sendMessage("⚠️ Vui lòng cung cấp URL TikTok hợp lệ. 📲");
     }
   }
 };
