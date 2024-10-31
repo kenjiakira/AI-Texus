@@ -23,7 +23,12 @@ module.exports = {
   description: "Tải nội dung từ TikTok thông qua URL.",
   usage: "tiktok <url>",
   author: "Hệ thống",
-  async execute({ api, args }) {
+  async execute({ api, args = [] }) {
+    
+    if (!Array.isArray(args)) {
+      return sendMessage("❌ Đã xảy ra lỗi với đối số. Vui lòng thử lại.");
+    }
+
     if (args.length === 0) {
       return sendMessage("⚠️ Vui lòng cung cấp URL TikTok. 📲");
     }
