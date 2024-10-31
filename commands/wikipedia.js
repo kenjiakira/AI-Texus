@@ -1,7 +1,5 @@
 const axios = require('axios');
-const fs = require('fs-extra');
-const path = require('path');
-const { sendMessage } = require('../handles/sendMessage'); 
+const { sendMessage } = require('../handles/sendMessage');
 
 module.exports = {
     name: "wikipedia",
@@ -9,20 +7,14 @@ module.exports = {
     usage: "wikipedia [từ khóa]",
     author: "Hệ thống",
     async execute(senderId, args, pageAccessToken) {
-        const searchTerm = args.join(" ") || null; 
+        const searchTerm = args.join(" ") || null;
 
         try {
             if (!searchTerm) {
                 const randomWikiArticle = await fetchRandomWikiArticle();
                 if (randomWikiArticle) {
                     await sendMessage(senderId, {
-                        text: `📚 Wikipedia: ${randomWikiArticle.title}\n\n${randomWikiArticle.extract}\n\nĐọc thêm: ${randomWikiArticle.url}\n\nBạn có thể tìm thêm thông tin bằng cách nhập wiki 'từ khóa'.`,
-                        attachment: {
-                            type: 'image',
-                            payload: {
-                                url: randomWikiArticle.image 
-                            }
-                        }
+                        text: `📚 Wikipedia: ${randomWikiArticle.title}\n\n${randomWikiArticle.extract}\n\nĐọc thêm: ${randomWikiArticle.url}\n\nBạn có thể tìm thêm thông tin bằng cách nhập 'wikipedia [từ khóa]'.`
                     }, pageAccessToken);
                 } else {
                     await sendMessage(senderId, { text: "Không thể tìm thấy thông tin ngẫu nhiên từ Wikipedia vào lúc này." }, pageAccessToken);
@@ -31,23 +23,12 @@ module.exports = {
                 const apiUrl = `https://vi.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(searchTerm)}`;
                 const response = await axios.get(apiUrl);
                 const wikiData = response.data;
+
                 if (wikiData.title && wikiData.extract) {
-                    const imageUrl = wikiData.thumbnail ? wikiData.thumbnail.source : null;
-                    let attachments = [];
-                    if (imageUrl) {
-                        attachments.push({
-                            type: 'image',
-                            payload: {
-                                url: imageUrl // Gửi ảnh trực tiếp từ URL
-                            }
-                        });
-                    }
                     const message = `📚 Wikipedia: ${wikiData.title}\n\n${wikiData.extract}\n\nĐọc thêm: ${wikiData.content_urls.desktop.page}`;
-                    await sendMessage(senderId, { text: message, attachment: attachments }, pageAccessToken);
-                    return;
+                    await sendMessage(senderId, { text: message }, pageAccessToken);
                 } else {
                     await sendMessage(senderId, { text: "Không tìm thấy thông tin từ khóa này trên Wikipedia." }, pageAccessToken);
-                    return;
                 }
             }
         } catch (error) {
@@ -63,12 +44,10 @@ async function fetchRandomWikiArticle(retries = 3) {
             const response = await axios.get(apiUrl);
             const wikiData = response.data;
             if (wikiData.title && wikiData.extract) {
-                const imageUrl = wikiData.thumbnail ? wikiData.thumbnail.source : null;
                 return {
                     title: wikiData.title,
                     extract: wikiData.extract,
-                    url: wikiData.content_urls.desktop.page,
-                    image: imageUrl
+                    url: wikiData.content_urls.desktop.page
                 };
             } else {
                 return null;
