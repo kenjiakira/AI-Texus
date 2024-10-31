@@ -14,12 +14,15 @@
     "@types/node": "^18.0.6",
     "axios": "^1.7.7",
     "body-parser": "^1.20.2",
+    "child_process": "^1.0.2",
     "express": "^4.19.2",
     "fs-extra": "^11.2.0",
     "image-downloader": "^4.3.0",
     "node-fetch": "^3.3.2",
+    "os": "^0.1.2",
     "path": "^0.12.7",
     "request": "^2.88.2",
+    "util": "^0.12.5",
     "winston": "^3.13.0"
   },
   "engines": {
