@@ -8,6 +8,7 @@ lerna-debug.log*
 .pnpm-debug.log*
 app.jssj
 token.json
+token.txt
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -130,11 +131,8 @@ dist
 .yarn/unplugged
 .yarn/build-state.yml
 .yarn/install-state.gz
-<<<<<<< HEAD
 .pnp.*
-=======
 .pnp.*
 
 node_modules/
->>>>>>> 6d95f4e (Fix)
 node_modules/

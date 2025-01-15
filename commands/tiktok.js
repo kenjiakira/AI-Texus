@@ -1,4 +1,4 @@
-const axios = require('axios');
+const axios = require('axios'); 
 const fs = require('fs');
 const path = require('path');
 const { sendMessage } = require('../handles/sendMessage'); 
@@ -23,15 +23,20 @@ module.exports = {
   description: "Tải nội dung từ TikTok thông qua URL.",
   usage: "tiktok <url>",
   author: "Hệ thống",
-  async execute({ api, args }) {
+  async execute({ api, args = [] }) {
+    
+    if (!Array.isArray(args)) {
+      return sendMessage({ text: "❌ Đã xảy ra lỗi với đối số. Vui lòng thử lại." });
+    }
+
     if (args.length === 0) {
-      return sendMessage("⚠️ Vui lòng cung cấp URL TikTok. 📲");
+      return sendMessage({ text: "⚠️ Vui lòng cung cấp URL TikTok. 📲" });
     }
 
     const url = args.join(" ").trim();
 
     if (!is_url(url)) {
-      return sendMessage("❌ Vui lòng cung cấp URL hợp lệ. 🌐");
+      return sendMessage({ text: "❌ Vui lòng cung cấp URL hợp lệ. 🌐" });
     }
 
     if (/tiktok\.com/.test(url)) {
@@ -39,7 +44,7 @@ module.exports = {
         const res = await axios.post(`https://www.tikwm.com/api/`, { url });
 
         if (res.data.code !== 0) {
-          return sendMessage("⚠️ Không thể tải nội dung từ URL này. 😢");
+          return sendMessage({ text: "⚠️ Không thể tải nội dung từ URL này. 😢" });
         }
 
         const tiktok = res.data.data;
@@ -60,10 +65,10 @@ module.exports = {
 
       } catch (error) {
         console.error("Lỗi trong quá trình xử lý:", error);
-        return sendMessage("❌ Đã xảy ra lỗi khi xử lý yêu cầu của bạn. 😥");
+        return sendMessage({ text: "❌ Đã xảy ra lỗi khi xử lý yêu cầu của bạn. 😥" });
       }
     } else {
-      return sendMessage("⚠️ Vui lòng cung cấp URL TikTok hợp lệ. 📲");
+      return sendMessage({ text: "⚠️ Vui lòng cung cấp URL TikTok hợp lệ. 📲" });
     }
   }
 };

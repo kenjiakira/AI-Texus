@@ -1,0 +1,19 @@
+{
+  "prefix": "-",
+  "adminIds": ["8522020297887049", "100092325757607"],
+  "botName": "AI Texus",
+  "version": "1.0.0",
+  "defaultCooldown": 5,
+  "webhookVerifyToken": "pagebot",
+  "defaultLang": "vi",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "messageSettings": {
+    "maxLength": 2000,
+    "defaultResponse": "Xin lỗi, tôi không hiểu yêu cầu của bạn"
+  },
+  "features": {
+    "autoSeen": true,
+    "autoReact": false,
+    "logMessages": true
+  }
+}
