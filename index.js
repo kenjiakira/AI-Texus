@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -9,7 +10,7 @@ const app = express();
 app.use(express.json());
 
 const VERIFY_TOKEN = 'pagebot';
-const PAGE_ACCESS_TOKEN = fs.readFileSync('token.txt', 'utf8').trim();
+const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const COMMANDS_PATH = path.join(__dirname, 'commands');
 
 app.get('/webhook', (req, res) => {

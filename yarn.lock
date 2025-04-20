@@ -16,6 +16,11 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
+"@google/generative-ai@^0.24.0":
+  version "0.24.0"
+  resolved "https://registry.npmjs.org/@google/generative-ai/-/generative-ai-0.24.0.tgz"
+  integrity sha512-fnEITCGEB7NdX0BhoYZ/cq/7WPZ1QS5IzJJfC3Tg/OwkvBetMiVJciyaan297OvE4B9Jg1xvo0zIazX/9sGu1Q==
+
 "@types/node@^18.0.6":
   version "18.19.55"
   resolved "https://registry.npmjs.org/@types/node/-/node-18.19.55.tgz"
@@ -270,6 +275,11 @@ destroy@1.2.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/destroy/-/destroy-1.2.0.tgz"
   integrity sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==
+
+dotenv@^16.5.0:
+  version "16.5.0"
+  resolved "https://registry.npmjs.org/dotenv/-/dotenv-16.5.0.tgz"
+  integrity sha512-m/C+AwOAr9/W1UOIZUo232ejMNnJAJtYQjUbHoNTBNTJSvqzzDh7vnrei3o3r3m9blf6ZoDkvcw0VmozNRFJxg==
 
 ecc-jsbn@~0.1.1:
   version "0.1.2"

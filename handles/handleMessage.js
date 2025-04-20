@@ -28,7 +28,7 @@ async function handleMessage(event, pageAccessToken) {
     if (commands.has(commandName.toLowerCase())) {
       await commands.get(commandName.toLowerCase()).execute(senderId, args, pageAccessToken, sendMessage);
     } else {
-      await commands.get('gpt4').execute(senderId, [messageText], pageAccessToken);
+      await commands.get('gemini').execute(senderId, [messageText], pageAccessToken);
     }
   } catch (error) {
     console.error(`Error executing command:`, error);
