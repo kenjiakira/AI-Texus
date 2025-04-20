@@ -3,20 +3,33 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
-require('dotenv').config();
+const bodyParser = require('body-parser');
 const { handleMessage } = require('./handles/handleMessage');
 const { handlePostback } = require('./handles/handlePostback');
 const config = require('./config.json');
 
 const app = express();
-app.use(express.json());
 
-const VERIFY_TOKEN = 'pagebot';
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const COMMANDS_PATH = path.join(__dirname, 'commands');
 
+app.get('/', (req, res) => {
+  res.send('Server is running!');
+});
+
 app.get('/webhook', (req, res) => {
-  const { 'hub.mode': mode, 'hub.verify_token': token, 'hub.challenge': challenge } = req.query;
+  console.log('Webhook GET request received');
+  
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+
+  console.log('Mode:', mode);
+  console.log('Token:', token);
+  console.log('Challenge:', challenge);
 
   if (mode && token) {
     if (mode === 'subscribe' && token === config.webhookVerifyToken) {
@@ -26,28 +39,38 @@ app.get('/webhook', (req, res) => {
     return res.sendStatus(403);
   }
 
-  res.sendStatus(400);
+  return res.sendStatus(404);
 });
 
 app.post('/webhook', (req, res) => {
+  console.log('Webhook POST request received');
+  console.log('Request body:', JSON.stringify(req.body, null, 2));
+
   const { body } = req;
 
   if (body.object === 'page') {
-    
-    body.entry?.forEach(entry => {
-      entry.messaging?.forEach(event => {
-        if (event.message) {
-          handleMessage(event, PAGE_ACCESS_TOKEN);
-        } else if (event.postback) {
-          handlePostback(event, PAGE_ACCESS_TOKEN);
-        }
+    try {
+      body.entry?.forEach(entry => {
+        entry.messaging?.forEach(event => {
+          console.log('Processing event:', JSON.stringify(event, null, 2));
+          
+          if (event.message) {
+            handleMessage(event, PAGE_ACCESS_TOKEN);
+          } else if (event.postback) {
+            handlePostback(event, PAGE_ACCESS_TOKEN);
+          }
+        });
       });
-    });
 
-    return res.status(200).send('EVENT_RECEIVED');
+      return res.status(200).send('EVENT_RECEIVED');
+    } catch (error) {
+      console.error('Error processing webhook event:', error);
+      return res.sendStatus(500);
+    }
   }
 
-  res.sendStatus(404);
+  console.log('Invalid request body object:', body.object);
+  return res.sendStatus(404);
 });
 
 const sendMessengerProfileRequest = async (method, url, data = null) => {
@@ -70,7 +93,7 @@ const loadCommands = () => {
     .filter(file => file.endsWith('.js'))
     .map(file => {
       const command = require(path.join(COMMANDS_PATH, file));
-      // Chỉ tải các lệnh có usedby = 0 (lệnh cho người dùng)
+  
       return command.name && command.description && command.usedby === 0 ? 
         { name: command.name, description: command.description } : null;
     })
