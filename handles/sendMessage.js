@@ -1,10 +1,8 @@
 const axios = require('axios');
 const path = require('path');
 
-// Helper function for POST requests
 const axiosPost = (url, data, params = {}) => axios.post(url, data, { params }).then(res => res.data);
 
-// Send a message with typing indicators
 const sendMessage = async (senderId, { text = '', attachment = null }, pageAccessToken) => {
   if (!text && !attachment) return;
 
@@ -12,10 +10,8 @@ const sendMessage = async (senderId, { text = '', attachment = null }, pageAcces
   const params = { access_token: pageAccessToken };
 
   try {
-    // Turn on typing indicator
     await axiosPost(url, { recipient: { id: senderId }, sender_action: "typing_on" }, params);
 
-    // Prepare message payload based on content
     const messagePayload = {
       recipient: { id: senderId },
       message: {}
@@ -26,25 +22,28 @@ const sendMessage = async (senderId, { text = '', attachment = null }, pageAcces
     }
 
     if (attachment) {
-      messagePayload.message.attachment = {
-        type: attachment.type,
-        payload: {
-          url: attachment.payload.url,
-          is_reusable: true
-        }
-      };
+      if (attachment.type && attachment.payload && attachment.payload.url) {
+        messagePayload.message.attachment = {
+          type: attachment.type,
+          payload: {
+            url: attachment.payload.url,
+            is_reusable: true
+          }
+        };
+      } else {
+        console.warn("Attachment không hợp lệ:", attachment);
+        await axiosPost(url, { recipient: { id: senderId }, message: { text: "Có lỗi xảy ra với tệp đính kèm." } }, params);
+        return; 
+      }
     }
 
-    // Send the message
     await axiosPost(url, messagePayload, params);
-
-    // Turn off typing indicator
     await axiosPost(url, { recipient: { id: senderId }, sender_action: "typing_off" }, params);
 
   } catch (e) {
-    // Extract and log the error message concisely
     const errorMessage = e.response?.data?.error?.message || e.message;
     console.error(`Error in ${path.basename(__filename)}: ${errorMessage}`);
+    await axiosPost(url, { recipient: { id: senderId }, message: { text: "Có lỗi xảy ra khi gửi tin nhắn." } }, params);
   }
 };
 
