@@ -70,7 +70,9 @@ const loadCommands = () => {
     .filter(file => file.endsWith('.js'))
     .map(file => {
       const command = require(path.join(COMMANDS_PATH, file));
-      return command.name && command.description ? { name: command.name, description: command.description } : null;
+      // Chỉ tải các lệnh có usedby = 0 (lệnh cho người dùng)
+      return command.name && command.description && command.usedby === 0 ? 
+        { name: command.name, description: command.description } : null;
     })
     .filter(Boolean);
 };
@@ -79,16 +81,23 @@ const loadMenuCommands = async (isReload = false) => {
   const commands = loadCommands();
 
   if (isReload) {
- 
-    await sendMessengerProfileRequest('delete', '/me/messenger_profile', { fields: ['commands'] });
-    console.log('Các lệnh menu đã được xóa thành công.');
+    try {
+      await sendMessengerProfileRequest('delete', '/me/messenger_profile', { fields: ['commands'] });
+      console.log('Các lệnh menu đã được xóa thành công.');
+    } catch (error) {
+      console.error('Lỗi khi xóa menu commands:', error);
+      return;
+    }
   }
 
-  await sendMessengerProfileRequest('post', '/me/messenger_profile', {
-    commands: [{ locale: 'default', commands }],
-  });
-
-  console.log('Các lệnh menu đã được tải thành công.');
+  try {
+    await sendMessengerProfileRequest('post', '/me/messenger_profile', {
+      commands: [{ locale: 'default', commands }],
+    });
+    console.log('Các lệnh menu đã được tải thành công.');
+  } catch (error) {
+    console.error('Lỗi khi tải menu commands:', error);
+  }
 };
 
 fs.watch(COMMANDS_PATH, (eventType, filename) => {

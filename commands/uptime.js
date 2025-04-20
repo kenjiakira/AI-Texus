@@ -11,6 +11,8 @@ module.exports = {
     description: "Hiển thị trạng thái hệ thống của bot.",
     usage: "uptime",
     author: "Hệ thống",
+    usedby: 2,
+    cooldown: 0,
     async execute(senderId, args, pageAccessToken, sendMessage, isAdmin) {
         if (!isAdmin) {
             return sendMessage(senderId, { text: "Bạn không có quyền truy cập lệnh này." }, pageAccessToken);

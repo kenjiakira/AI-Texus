@@ -6,6 +6,9 @@ module.exports = {
     description: "Tra cứu thông tin từ Wikipedia.",
     usage: "wikipedia [từ khóa]",
     author: "Hệ thống",
+    usedby: 0,
+    cooldown: 0,
+    
     async execute(senderId, args, pageAccessToken) {
         const searchTerm = args.join(" ") || null;
 

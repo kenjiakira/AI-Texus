@@ -5,6 +5,8 @@ module.exports = {
   description: 'Khởi động lại bot.',
   usage: 'restart',
   author: 'Hệ thống',
+  usedby: 2,
+  cooldown: 0,
   execute(senderId, args, pageAccessToken, isAdmin) {
     if (!isAdmin) {
       sendMessage(senderId, { text: 'Bạn không có quyền truy cập lệnh này.' }, pageAccessToken);

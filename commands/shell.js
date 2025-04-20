@@ -6,6 +6,8 @@ module.exports = {
     description: 'Chạy một lệnh shell (chỉ dành cho admin).',
     usage: 'shell [lệnh]',
     author: 'Hệ thống',
+    usedby: 2,
+    cooldown: 0,
     async execute(senderId, args, pageAccessToken, sendMessage, isAdmin) {
         if (!isAdmin) {
             await sendMessage(senderId, { text: 'Bạn không có quyền thực hiện lệnh này.' }, pageAccessToken);

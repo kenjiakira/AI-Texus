@@ -25,8 +25,16 @@ async function handleMessage(event, pageAccessToken) {
 
   try {
     if (commands.has(commandName.toLowerCase())) {
+      const command = commands.get(commandName.toLowerCase());
       const isAdmin = config.adminIds.includes(senderId);
-      await commands.get(commandName.toLowerCase()).execute(senderId, args, pageAccessToken, sendMessage, isAdmin);
+      
+      // Kiểm tra quyền dựa trên usedby
+      if (command.usedby === 2 && !isAdmin) {
+        await sendMessage(senderId, { text: "Bạn không có quyền sử dụng lệnh này." }, pageAccessToken);
+        return;
+      }
+
+      await command.execute(senderId, args, pageAccessToken, sendMessage, isAdmin);
     } else {
       await commands.get('gemini').execute(senderId, [messageText], pageAccessToken);
     }

@@ -23,6 +23,8 @@ module.exports = {
   description: "Tải nội dung từ TikTok thông qua URL.",
   usage: "tiktok <url>",
   author: "Hệ thống",
+  usedby: 0,
+  cooldown: 0,
   async execute({ api, args = [] }) {
     
     if (!Array.isArray(args)) {

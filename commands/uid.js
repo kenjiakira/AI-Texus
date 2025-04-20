@@ -5,6 +5,8 @@ module.exports = {
   description: 'Xem UID của bạn',
   usage: 'uid',
   author: 'Hệ thống',
+  usedby: 0,
+  cooldown: 0,
   execute(senderId, args, pageAccessToken) {
     const responseMessage = `
 ━━━━━━━━━━━━━━

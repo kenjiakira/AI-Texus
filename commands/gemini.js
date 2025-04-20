@@ -55,6 +55,8 @@ module.exports = {
     description: 'Chat với AKI - Trợ lý ảo thông minh',
     usage: 'Chỉ cần nhập tin nhắn của bạn',
     author: 'coffee',
+    usedby: 0,
+    cooldown: 0,
 
     async execute(senderId, args, pageAccessToken) {
         if (!args || args.length === 0) {

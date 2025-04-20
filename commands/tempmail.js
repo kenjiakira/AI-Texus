@@ -8,6 +8,8 @@ module.exports = {
   description: 'Tạo email tạm thời và kiểm tra hộp thư đến',
   usage: '-tempmail gen HOẶC -tempmail inbox <email>',
   author: 'coffee',
+  usedby: 0,
+  cooldown: 0,
 
   async execute(senderId, args, pageAccessToken) {
     const [cmd, email] = args;
