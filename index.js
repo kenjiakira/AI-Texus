@@ -17,7 +17,11 @@ const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const COMMANDS_PATH = path.join(__dirname, 'commands');
 
 app.get('/', (req, res) => {
-  res.send('Server is running!');
+  res.json({
+    status: 'ok',
+    message: 'AI Texus Bot is running!',
+    timestamp: new Date().toISOString()
+  });
 });
 
 app.get('/webhook', (req, res) => {
@@ -36,9 +40,11 @@ app.get('/webhook', (req, res) => {
       console.log('WEBHOOK_VERIFIED');
       return res.status(200).send(challenge);
     }
+    console.log('Webhook verification failed');
     return res.sendStatus(403);
   }
 
+  console.log('Invalid verification request');
   return res.sendStatus(404);
 });
 
@@ -131,12 +137,23 @@ fs.watch(COMMANDS_PATH, (eventType, filename) => {
   }
 });
 
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({
+    status: 'error',
+    message: 'Internal server error',
+    timestamp: new Date().toISOString()
+  });
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`Máy chủ đang chạy trên cổng ${PORT}`);
+  console.log(`AI Texus Bot đang chạy trên cổng ${PORT}`);
+  console.log('Environment:', process.env.NODE_ENV || 'development');
   try {
     await loadMenuCommands(); 
+    console.log('Menu commands đã được tải thành công');
   } catch (error) {
-    console.error('Lỗi khi tải các lệnh menu ban đầu:', error);
+    console.error('Lỗi khi tải menu commands:', error);
   }
 });

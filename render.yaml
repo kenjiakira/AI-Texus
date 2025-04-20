@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: ai-texus
+    env: node
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: NODE_VERSION
+        value: 20.x
+      - key: PORT
+        value: 3000
+      - key: PAGE_ACCESS_TOKEN
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: GOOGLE_API_KEYS_BACKUP
+        sync: false
