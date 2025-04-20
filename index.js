@@ -11,13 +11,8 @@ const config = require('./config.json');
 const app = express();
 app.use(express.json());
 
-<<<<<<< HEAD
 const VERIFY_TOKEN = 'pagebot';
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-=======
-const VERIFY_TOKEN = config.webhookVerifyToken;
-const PAGE_ACCESS_TOKEN = process.env.TOKEN;
->>>>>>> 19e2edcaa8addad74f5280fac67948060bcb0f4b
 const COMMANDS_PATH = path.join(__dirname, 'commands');
 
 app.get('/webhook', (req, res) => {
