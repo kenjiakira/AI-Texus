@@ -9,12 +9,17 @@
   "routes": [
     {
       "src": "/webhook",
-      "methods": ["POST", "GET"],
-      "dest": "index.js"
+      "methods": ["GET"],
+      "dest": "/index.js"
+    },
+    {
+      "src": "/webhook",
+      "methods": ["POST"],
+      "dest": "/index.js"
     },
     {
       "src": "/(.*)",
-      "dest": "index.js"
+      "dest": "/index.js"
     }
   ]
 }

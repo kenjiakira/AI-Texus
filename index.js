@@ -10,6 +10,11 @@ const config = require('./config.json');
 
 const app = express();
 
+app.use('/webhook', express.json({
+  verify: (req, res, buf) => {
+    req.rawBody = buf.toString();
+  }
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -20,63 +25,68 @@ app.get('/', (req, res) => {
   res.json({
     status: 'ok',
     message: 'AI Texus Bot is running!',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV || 'development'
   });
 });
 
 app.get('/webhook', (req, res) => {
-  console.log('Webhook GET request received');
-  
+  console.log('[Webhook GET] Request received:', {
+    mode: req.query['hub.mode'],
+    token: req.query['hub.verify_token'],
+    challenge: req.query['hub.challenge']
+  });
+
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
 
-  console.log('Mode:', mode);
-  console.log('Token:', token);
-  console.log('Challenge:', challenge);
-
-  if (mode && token) {
-    if (mode === 'subscribe' && token === config.webhookVerifyToken) {
-      console.log('WEBHOOK_VERIFIED');
-      return res.status(200).send(challenge);
-    }
-    console.log('Webhook verification failed');
-    return res.sendStatus(403);
+  if (!mode || !token) {
+    console.log('[Webhook] Missing mode or token');
+    return res.sendStatus(400);
   }
 
-  console.log('Invalid verification request');
-  return res.sendStatus(404);
+  if (mode === 'subscribe' && token === config.webhookVerifyToken) {
+    console.log('[Webhook] Verification successful');
+    return res.status(200).send(challenge);
+  }
+
+  console.log('[Webhook] Verification failed: Invalid token');
+  return res.sendStatus(403);
 });
 
 app.post('/webhook', (req, res) => {
-  console.log('Webhook POST request received');
-  console.log('Request body:', JSON.stringify(req.body, null, 2));
+  console.log('[Webhook POST] Request received');
+  console.log('[Webhook] Headers:', req.headers);
+  console.log('[Webhook] Body:', JSON.stringify(req.body, null, 2));
 
   const { body } = req;
 
-  if (body.object === 'page') {
-    try {
-      body.entry?.forEach(entry => {
-        entry.messaging?.forEach(event => {
-          console.log('Processing event:', JSON.stringify(event, null, 2));
-          
-          if (event.message) {
-            handleMessage(event, PAGE_ACCESS_TOKEN);
-          } else if (event.postback) {
-            handlePostback(event, PAGE_ACCESS_TOKEN);
-          }
-        });
-      });
-
-      return res.status(200).send('EVENT_RECEIVED');
-    } catch (error) {
-      console.error('Error processing webhook event:', error);
-      return res.sendStatus(500);
-    }
+  if (!body || body.object !== 'page') {
+    console.log('[Webhook] Invalid request body:', body);
+    return res.sendStatus(400);
   }
 
-  console.log('Invalid request body object:', body.object);
-  return res.sendStatus(404);
+  try {
+    body.entry?.forEach(entry => {
+      console.log('[Webhook] Processing entry:', entry);
+      
+      entry.messaging?.forEach(event => {
+        console.log('[Webhook] Processing event:', event);
+        
+        if (event.message) {
+          handleMessage(event, PAGE_ACCESS_TOKEN);
+        } else if (event.postback) {
+          handlePostback(event, PAGE_ACCESS_TOKEN);
+        }
+      });
+    });
+
+    return res.status(200).send('EVENT_RECEIVED');
+  } catch (error) {
+    console.error('[Webhook] Error processing event:', error);
+    return res.sendStatus(500);
+  }
 });
 
 const sendMessengerProfileRequest = async (method, url, data = null) => {
