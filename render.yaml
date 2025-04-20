@@ -3,10 +3,12 @@ services:
     name: ai-texus
     env: node
     buildCommand: npm install
-    startCommand: node index.js
+    startCommand: npm start
     envVars:
       - key: NODE_VERSION
         value: 20.x
+      - key: NODE_ENV
+        value: production
       - key: PORT
         value: 3000
       - key: PAGE_ACCESS_TOKEN
